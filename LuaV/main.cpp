@@ -25,7 +25,7 @@ void scriptMain()
             luaTerminate();
             luaInitialize();
             luaSearchForScripts();
-            resetKeyStates();
+            updateKeyboard();
         }
 
         luaTick();
@@ -34,10 +34,10 @@ void scriptMain()
         if (isKeyDown(17) && wasKeyPressed(46))
         {
             toggleConsole();
-            resetKeyStates();
+            updateKeyboard();
         }
 
-        resetKeyStates();
+        updateKeyboard();
     }
 }
 
@@ -53,12 +53,12 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserv
     {
     case DLL_PROCESS_ATTACH:
         scriptRegister(hModule, scriptMain);
-        keyboardHandlerRegister(keyboardHandler);
+        keyboardHandlerRegister(onKeyboardMessage);
         break;
     case DLL_PROCESS_DETACH:
         scriptTerminate();
         scriptUnregister(hModule);
-        keyboardHandlerUnregister(keyboardHandler);
+        keyboardHandlerUnregister(onKeyboardMessage);
         break;
     }
 

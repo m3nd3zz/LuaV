@@ -1,52 +1,48 @@
 #include "keyboard.h"
 
-KeyState keys[KEYS_ARRAY_SIZE] = {};
+constexpr auto KEY_STATE_NONE = 0;
+constexpr auto KEY_STATE_PRESSED = 1;
+constexpr auto KEY_STATE_DOWN = 2;
+constexpr auto KEY_STATE_RELEASED = 3;
 
-void keyboardHandler(DWORD key, WORD repeats, BYTE scanCode, BOOL isExtended, BOOL isWithAlt, BOOL wasDownBefore, BOOL isUpNow)
+constexpr auto KEYS_ARRAY_SIZE = 256;
+
+int keys[KEYS_ARRAY_SIZE];
+
+void onKeyboardMessage(DWORD key, WORD repeats, BYTE scanCode, BOOL isExtended, BOOL isWithAlt, BOOL wasDownBefore, BOOL isUpNow)
 {
-	if (key >= KEYS_ARRAY_SIZE)
-	{
-		return;
-	}
-
-	auto& state = keys[key];
-
-	if (!wasDownBefore && !isUpNow)
-	{
-		state.wasPressed = TRUE;
-		state.isDown = TRUE;
-		state.wasReleased = FALSE;
-	}
-	else if (wasDownBefore && isUpNow)
-	{
-		state.wasPressed = FALSE;
-		state.isDown = FALSE;
-		state.wasReleased = TRUE;
-	}
+	// If is released, then assign the state as released, otherwise assign it as pressed
+	keys[key] = (wasDownBefore && isUpNow) ? KEY_STATE_RELEASED : KEY_STATE_PRESSED;
 }
 
-void resetKeyStates()
+void updateKeyboard()
 {
 	for (int i = 0; i < KEYS_ARRAY_SIZE; ++i)
 	{
-		auto& state = keys[i];
+		int* state = &keys[i];
 
-		state.wasPressed = FALSE;
-		state.wasReleased = FALSE;
+		if (*state == KEY_STATE_PRESSED)
+		{
+			*state = KEY_STATE_DOWN;
+		}
+		else if (*state == KEY_STATE_RELEASED)
+		{
+			*state = KEY_STATE_NONE;
+		}
 	}
 }
 
 bool wasKeyPressed(DWORD key)
 {
-	return key < KEYS_ARRAY_SIZE && keys[key].wasPressed;
+	return key < KEYS_ARRAY_SIZE && keys[key] == KEY_STATE_PRESSED;
 }
 
 bool isKeyDown(DWORD key)
 {
-	return key < KEYS_ARRAY_SIZE && keys[key].isDown;
+	return key < KEYS_ARRAY_SIZE && (keys[key] == KEY_STATE_PRESSED || keys[key] == KEY_STATE_DOWN);
 }
 
 bool wasKeyReleased(DWORD key)
 {
-	return key < KEYS_ARRAY_SIZE && keys[key].wasReleased;
+	return key < KEYS_ARRAY_SIZE && keys[key] == KEY_STATE_RELEASED;
 }
