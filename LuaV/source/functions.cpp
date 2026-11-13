@@ -75,19 +75,19 @@ static int lua_worldGetAllVehicles(lua_State* L)
 static int lua_worldGetAllPeds(lua_State* L)
 {
     int peds[WORLD_GET_ALL_ARRAY_SIZE];
-    return luaPushWorldGetAllArray(L, peds, worldGetAllVehicles(peds, WORLD_GET_ALL_ARRAY_SIZE));
+    return luaPushWorldGetAllArray(L, peds, worldGetAllPeds(peds, WORLD_GET_ALL_ARRAY_SIZE));
 }
 
 static int lua_worldGetAllObjects(lua_State* L)
 {
     int objects[WORLD_GET_ALL_ARRAY_SIZE];    
-    return luaPushWorldGetAllArray(L, objects, worldGetAllVehicles(objects, WORLD_GET_ALL_ARRAY_SIZE));
+    return luaPushWorldGetAllArray(L, objects, worldGetAllObjects(objects, WORLD_GET_ALL_ARRAY_SIZE));
 }
 
 static int lua_worldGetAllPickups(lua_State* L)
 {
     int pickups[WORLD_GET_ALL_ARRAY_SIZE];
-    return luaPushWorldGetAllArray(L, pickups, worldGetAllVehicles(pickups, WORLD_GET_ALL_ARRAY_SIZE));
+    return luaPushWorldGetAllArray(L, pickups, worldGetAllPickups(pickups, WORLD_GET_ALL_ARRAY_SIZE));
 }
 
 static int lua_getGameVersion(lua_State* L)
